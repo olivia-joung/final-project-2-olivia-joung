@@ -1,0 +1,172 @@
+---
+title: "Spotify Data: An Analysis on Track Popularity"
+subtitle: |
+  | Final Project 
+  | Data Science 1 with R (STAT 301-2)
+author: "Olivia Joung"
+date: today
+
+format:
+  html:
+    toc: true
+    embed-resources: true
+    code-fold: show
+    link-external-newwindow: true
+
+execute:
+  warning: false
+  
+from: markdown+emoji 
+
+---
+::: {.callout-tip icon=false}
+
+## Github Repo Link
+
+[https://github.com/olivia-joung/final-project-2-olivia-joung.git](https://github.com/olivia-joung/final-project-2-olivia-joung.git)
+
+:::
+
+## Introduction
+
+`spotify_data` is a dataset of 33,000 songs available on Spotify, detailing each track's individual qualitative and quantitative characters (ie music composition, genre, artist, etc.). Additionally, rather than record songs' popularity by its number of streams or something more easily quantifiable, this dataset tracks popularity by a scale from 1-100. (See source information in 'References' below.)
+
+Going into this analysis, I was largely interested in exploring:
+
+1) How accurately the popularity of a song can be predicted just by looking at its quantifiable/identifiable characteristics
+2) Which of those characteristics make the best predictors when it comes to approximating popularity
+
+## Data overview and quality
+
+Again, we will use one dataset `spotify_data`. This is a cleaned dataset derived from the raw data `spotify_songs`.
+
+The 16 variables taken into consideration are as follows: 
+
+- `track_popularity` and `track_popularity_bins` (a factor mutation of the original variable `track_popularity` that splits the points up into ranges of 10)
+- `playlist_genre` and `playlist_subgenre`
+- Remaining quantitative variables that inspect composition of song: `danceability`, `energy`, `key`, `loudness`, `mode`, `speechiness`, `acousticness`, `instrumentalness`, `liveness`, `valence`, `tempo`, and `duration_ms` (aka duration of song in milliseconds)
+
+Variables from the original sets that were not ultimately used in my data analysis can be found in the appendix.
+
+![](plots/track_popularity_bar.png)
+
+Looking closer at `track_popularity`, there are 0 missing values and no clear outliers to take into account (which makes sense, considering all values just range from 0-100).
+
+After splitting the popularity scores into ranges of 10 and plotting, it's clear that most scores range from 40-70, however the range of scores with the highest frequency is 0-10. With that said, looking at the distribution—as well as the mean and median of the data both being around 43-45 (ie closer to the middle)—it appears that the distribution of scores here is normally distributed enough to not require logarithmic transformations when fitting models. 
+
+Looking closer at the data (as seein in `prelim_analysis` R script), the variables that appear to have the highest correlation with `track_popularity` is danceability, energy, speechiness, acousticness, instrumentalness, liveness, tempo, valence, loudness, and duration_ms. Key and mode showed little to no correlation and therefore will be excluded.
+
+Additionally, playlist genre and subgenre also appear to be worth looking more into as predictors, due to the wide variation in track popularity, as seen below:
+
+![](plots/subgenre_boxplot.png)
+
+## Methods
+
+**Target variable is `track_popularity`, with RMSE as my assessment metric. This is a regression problem.**
+
+The main goal here is to compare different models for predicting the popularity of a certain track and adjusting recipes/feature engineering accordingly. 
+
+### Data splitting and resampling
+
+Initial split with a training/testing proportion of 80/20. V-fold cross-validation also used with a v-value of 10 and 5 repeats (full code of initial split seen in corresponding R script). 
+
+### Model types
+
+In addition to the baseline model, we'll also be using:
+
+- Linear regression
+- Elastic net 
+- Boosted tree
+- K-nearest neighbors
+- Random forest
+
+Should cover the data splitting procedure and clearly identify what type of prediction problem it is. State and describe the model types you will be fitting. Describe any parameters that will be tuned. Describe what recipes will be used. Describe the resampling technique used. In some cases an extended discussion about recipe variations might be useful. Especially if students are using recipe variation to try and explore the predictive importance of certain variables. Explain the metric that will be used to compare and ultimately used to select a final model.
+
+### Recipe types
+
+**Basic recipe:**
+
+- Predicted the target variable with all other variables (except `track_popularity_bins`)
+- One-hot encoded all categorical predictors
+- Filtered out variables have have zero variance
+- Centered and scaled all predictors
+
+**Recipe for linear models with all variables:**
+
+- Same steps as basic recipe 
+- Also removed key and mode
+- Set interactions between tempo and danceability, tempo and energy, energy and loudness, and speechiness and instrumentalness
+
+**Recipe for linear models without playlist genre information:**
+
+- Same steps as first linear model
+- Also removed playlist genre variables
+
+**Recipe for tree models with all variables:**
+
+- Same steps as basic recipe 
+- Also removed key and mode
+
+** Recipe for tree models without playlist genre information:**
+
+- Same steps as first tree recipe
+- Also removed playlist genre variables
+
+## Model Building & Selection Results 
+**NOTE TO GRADER: I wasn't able to get my random forest to stop running, however I have still kept my R script with all the tuning information I had.**
+
+**Again: The metric we're using here is RMSE.**
+
+
+| Model Type          | Best RMSE Mean  | Corresponding Standard Error  | 
+|---------------------|-----------------:|-----------------:|
+| Baseline        |        22.9          |          0.0251          |
+| Linear (w/ basic recipe)         |        22.9          |            0.0251          |
+| Linear         |        22.9          |                   0.0249          |
+| Linear (no genre) |        24.0          |             0.0239          |         
+| K-nearest neighbors (w/ basic recipe)         |        23.7          |            0.0321          |
+| K-nearest neighbors         |        23.6              |        0.0302          |       
+| K-nearest neighbors (no genre) |        23.7          |              0.0329          |            
+| Elastic net (w/ basic recipe)         |        22.9              |        0.0250          |
+| Elastic net         |        24.0          |                0.0239          |   
+| Elastic net (no genre) |        24.0          |           0.0239          |                   
+| Boosted tree (w/ basic recipe)         |        22.7              |        0.0261          |
+| Boosted tree         |        22.7          |                   0.0238          |
+| Boosted tree (no genre) |        23.6          |            0.0256          |   
+| Random forest (w/ basic recipe)         |        n/a          |            n/a          |
+| Random forest        |        n/a          |             n/a          |     
+| Random forest (no genre) |        n/a          |           n/a          |
+
+: Best RMSE Means for each Model Type {#tbl-mod-totals-reg .striped .hover}
+
+
+Most successful tuning parameters for each model type:
+
+- Linear (no tuning parameters), however the most successful model type here was the one with the basic recipe. 
+- K-nearest neighbors (with tailored recipe including playlist genres) was the most successful out of the three. For parameters, the most successful was a 'neighbors' value of 15.
+- Boosted tree model (with the tailored recipe that includes the playlist genres) appears to be the most successful with tuning parameters of: an mtry of 7, min_n of 40, and a learn_rate of 0.631.
+- Elastic net (with the most basic recipe) appears to be the most successful with tuning parameters of: a penalty close to 0 and a mixture of 0.762 .
+
+## Final Model Analysis
+
+Therefore, boosted tree (with tailored recipe) may be the best, though based on how high the RMSE is across all models, it appears that building predictive models for popularity at all is not very effective—especially considering the mean RMSE's are all similar to (or even larger than) the baseline model's. 
+
+## Conclusion
+
+Ultimately, it appears that track popularity cannot be 
+
+Conclusion
+State any conclusions or discoveries/insights. This is a great place for future work, new research questions, and next steps.
+
+
+
+
+
+## References
+`spotify_data` derived from `spotify_songs.csv`^[citation: [public Kaggle dataset](https://www.kaggle.com/datasets/joebeachcapital/30000-spotify-songs)], which is a dataset of roughly 33,000 songs on Spotify.
+
+## Appendix (variables that weren't used)
+
+track_id, track_name, track_album_id, track_artist, track_album_name,
+playlist_id, playlist_name, track_album_release_date, key, mode
+

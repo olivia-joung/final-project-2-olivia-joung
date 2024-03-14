@@ -1,0 +1,36 @@
+---
+title: "Spotify Data Analysis: Executive Summary"
+subtitle: |
+  | Final Project 
+  | Data Science 1 with R (STAT 301-2)
+author: "Olivia Joung"
+date: today
+
+format:
+  html:
+    toc: true
+    embed-resources: true
+    code-fold: show
+    link-external-newwindow: true
+
+execute:
+  warning: false
+  
+from: markdown+emoji 
+
+---
+::: {.callout-tip icon=false}
+
+## Github Repo Link
+
+[https://github.com/olivia-joung/final-project-2-olivia-joung.git](https://github.com/olivia-joung/final-project-2-olivia-joung.git)
+
+:::
+
+## Purpose
+In summary, my goal heading into this project was to utilize this data in order to see which variables (if any) would be best suited as predictors for the popularity of any given track on Spotify. 
+
+## Major steps/findings
+
+
+## Conclusions and further questions
