@@ -32,5 +32,23 @@ In summary, my goal heading into this project was to utilize this data in order 
 
 ## Major steps/findings
 
+Fortunately, the raw datasets I chose were already fairly clean via tidyverse standards as is, so I was able to just go straight into univariate and bivariate analysis. 
+
+I first looked at track popularity by genre/subgenre, as seen below:
+
+![](plots/subgenre_boxplot.png)
+
+Though there is quite a bit of variation here within the greater genres themselves ('progressive electro house,' for example, having a much lower median popularity than the other subgenres within EDM), I thought the variation of popularity even between two subgenres of the same genre would make for effective predicting. I also looked closer at the quantitative variables and ultimately found that an argument could be made for the effectiveness of each variable as a predictor, with the exception of key and mode—which appeared to be roughly the same across all popularity levels. There was no dramatic linear slope between any of the variables—the points in general either sloping slightly up or slightly down as the track popularity increased. 
+
+To start, I did an initial split with a training/testing proportion of 80/20, along with V-fold cross-validation also used with a v-value of 10 and 5 repeats. I chose to do five models, in addition to a baseline model: Linear regression, Elastic net, Boosted tree, K-nearest neighbors, and Random forest. Then, I created three different recipes for fitting/tuning each model: one basic recipe with all variables as predictors, one more tailored recipe (one for linear and one for tree types), and one that excluded playlist genre/subgenre variables, just to study the effectiveness of only using the quantitative variables as predictors. 
+
+Using RMSE as my assessment metric, I ultimately found that the boosted tree model with the tailored recipe had the most accurate predictions, though not by very far of a margin and still not very effective, as seen below:
+
+![](results/spotify_plot.png)
+
+The high RMSE's—as well as the fact that all of the prediction capabilities were either the same as or worse than the baseline's. The key difference when comparing models, however, is that the models that excluded genre and subgenre were generally less effective than the ones that included them, indicating that those two variables at least make effective predictor variables (though perhaps in tandem with a different combination of quantitative variables).
 
 ## Conclusions and further questions
+
+In summation, contrary to what I anticipated going into this, it appears that looking at the most micro aspects of songs (danceability, energy, etc.) will not necessarily be effective in predicting how popular a given track may be—at least when only combined with each other. On that note, I think it would be interesting in the future to explore different factors of songs that, coupled with genre/subgenre information, could potentially make good predictors for a track's popularity. One factor for their ineffectiveness here could be that these tracks are already pulled from top/trending playlists on Spotify, implying that the 30,000 songs here are already relatively "popular" based on the rankings provided by the data. I think it would probably be more useful to look at a greater variety of songs—perhaps looking beyond Spotify—and seeing how the data (particularly the quantitative variables we looked at) would be different then.
+

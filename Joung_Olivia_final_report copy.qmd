@@ -80,8 +80,6 @@ In addition to the baseline model, we'll also be using:
 - K-nearest neighbors
 - Random forest
 
-Should cover the data splitting procedure and clearly identify what type of prediction problem it is. State and describe the model types you will be fitting. Describe any parameters that will be tuned. Describe what recipes will be used. Describe the resampling technique used. In some cases an extended discussion about recipe variations might be useful. Especially if students are using recipe variation to try and explore the predictive importance of certain variables. Explain the metric that will be used to compare and ultimately used to select a final model.
-
 ### Recipe types
 
 **Basic recipe:**

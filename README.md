@@ -1,4 +1,10 @@
-## Basic repo setup for final project
+## Spotify Data: An Analysis on Track Popularity
+
+This repository is for an analysis of data on 30,000 Spotify tracks, including qualitative data like genre/subgenre, as well as quantitative data like energy, song duration, etc.
+
+## Basic overview of what can be found in repo
+
+**Note: I had commit issues with my original repo, so this is a copy of my original project, which is why all the commits are so close together. Previously discussed with Professor Kuyper.**
 
 ### Folders/directories
 
