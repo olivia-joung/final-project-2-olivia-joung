@@ -107,7 +107,7 @@ Should cover the data splitting procedure and clearly identify what type of pred
 - Same steps as basic recipe 
 - Also removed key and mode
 
-** Recipe for tree models without playlist genre information:**
+**Recipe for tree models without playlist genre information:**
 
 - Same steps as first tree recipe
 - Also removed playlist genre variables
@@ -139,7 +139,6 @@ Should cover the data splitting procedure and clearly identify what type of pred
 
 : Best RMSE Means for each Model Type {#tbl-mod-totals-reg .striped .hover}
 
-
 Most successful tuning parameters for each model type:
 
 - Linear (no tuning parameters), however the most successful model type here was the one with the basic recipe. 
@@ -147,20 +146,23 @@ Most successful tuning parameters for each model type:
 - Boosted tree model (with the tailored recipe that includes the playlist genres) appears to be the most successful with tuning parameters of: an mtry of 7, min_n of 40, and a learn_rate of 0.631.
 - Elastic net (with the most basic recipe) appears to be the most successful with tuning parameters of: a penalty close to 0 and a mixture of 0.762 .
 
+Therefore, it appears that boosted tree (with the tailored recipe, playlist genres included) has the most successful model with an RMSE value of 22.7 and a standard error of 0.0238.
+
+Note that across all categories, the ones using the recipe that excludes playlist genre have the higher RMSE's and therefore are less effective at predicting than those that include them. This means that playlist genres/subgenres do in fact have somewhat of a relationship with the popularity of a track. 
+
 ## Final Model Analysis
 
 Therefore, boosted tree (with tailored recipe) may be the best, though based on how high the RMSE is across all models, it appears that building predictive models for popularity at all is not very effective—especially considering the mean RMSE's are all similar to (or even larger than) the baseline model's. 
 
+The lack of correlation and/or the weak ability to predict track popularity via the utilized predictors can be seen here, in which there is clearly very weak amount of overlap between predicted and actual popularity. 
+
+![](results/spotify_plot.png)
+
 ## Conclusion
 
-Ultimately, it appears that track popularity cannot be 
+Ultimately, it appears that track popularity cannot be predicted via the predictors that were given to us in the data set—at least with the specific combinations/interactions between potential predictors we chose. Notably, comparing the models with each other clearly showed that the presence of genre/subgenre in data does make a difference, considering those without that information generally proved to have worse predictions that those that had them. This in tandem with the inability of its combination with other predictors to make good guesses for the popularity of a song tells me that—in contrast to what I had expected going in—the actual minute compositional details of a song (its tempo, energy, etc.) does little in the way of predicting popularity. 
 
-Conclusion
-State any conclusions or discoveries/insights. This is a great place for future work, new research questions, and next steps.
-
-
-
-
+In the future, it would be interesting to look deeper and reevaluate what variables—in tandem with genre/subgenre—would in fact make good predictors to a song. I noticed that most of the variables here focused more on the instrumentality of the song rather than the actual lyrics—maybe it would be more helpful to look at things like word count, the kind of voice who's singing it, how many octaves it is sung in, etc. 
 
 ## References
 `spotify_data` derived from `spotify_songs.csv`^[citation: [public Kaggle dataset](https://www.kaggle.com/datasets/joebeachcapital/30000-spotify-songs)], which is a dataset of roughly 33,000 songs on Spotify.

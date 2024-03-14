@@ -35,6 +35,12 @@
 data/spotify_songs.csv
 data/charts.csv
 data/spotify_folds.rda
+data/spotify_data.rds
+data/spotify_data.rda
+data/spotify_songs.csv
+data/spotify_split.rda
+data/spotify_test.rda
+data/spotify_train.rda
 results/baseline_fit.rda
 results/lm_fit.rda
 results/null_fit.rda
@@ -46,9 +52,11 @@ results/en_tuned.rda
 results/knn_tuned_basic.rda
 results/knn_tuned_no.rda
 results/knn_tuned.rda
-results/bt_tuned_basic.rda
-results/bt_tuned_no.rda
-results/bt_tuned.rda
+results/boost_tuned_basic.rda
+results/boost_tuned_no.rda
+results/boost_tuned.rda
+results/final_fit.rda
+results/spotify_metrics.rda
 
 
 # ignore files (likely datasets or graphics) if too large (> 100 MB)
