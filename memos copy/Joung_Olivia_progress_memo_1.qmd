@@ -1,0 +1,110 @@
+---
+title: "Progress Memo 1"
+subtitle: |
+  | Final Project 
+  | Data Science 2 with R (STAT 301-2)
+author: "Olivia Joung"
+date: today
+
+format:
+  html:
+    toc: true
+    embed-resources: true
+    
+execute:
+  echo: false
+  warning: false
+
+from: markdown+emoji 
+reference-location: margin
+citation-location: margin
+---
+
+::: {.callout-tip icon=false}
+
+## Github Repo Link
+
+[https://github.com/stat301-2-2024-winter/final-project-2-olivia-joung.git](https://github.com/stat301-2-2024-winter/final-project-2-olivia-joung.git)
+
+:::
+
+## Data source
+
+`spotify_data`^[citation: [public Kaggle dataset](https://www.kaggle.com/datasets/joebeachcapital/30000-spotify-songs)] is a dataset of roughly 33,000 songs on Spotify.
+
+## Why this data
+
+#### Prediction research question:
+
+How accurately can the popularity of a song be predicted, just by looking at its quantifiable/identifiable characteristics? Which of those characteristics make the best predictors when it comes to approximating popularity?
+--> (Target variable: `track_popularity` )
+
+`spotify_data` is especially interesting for exploring this question because it details' both quantitative and qualitative characteristics of songs, offering a wide variety of potential predictors. Interestingly, rather than record songs' popularity by its number of streams or something more easily quantifiable, this dataset tracks popularity by a scale from 1-100 (this being the target variable, `track_popularity`). 
+
+## Data quality & complexity check
+
+(Note: actual reading in of data in R scripts, with glimpse of data provided below)
+
+```{r}
+# Load packages
+library(tidyverse)
+library(here)
+library(skimr)
+library(janitor)
+
+spotify_data <- read_rds(here("data/spotify_data.rds")) |>
+  mutate(playlist_genre = factor(playlist_genre),
+         playlist_subgenre = factor(playlist_subgenre))
+
+glimpse(spotify_data)
+```
+
+- `spotify_data` has 32,833 observations and 23 variables. Ten are categorical (`track_id`, `track_name`, `playlist_genre`, etc.), and the remaining 13 are numeric (`track_popularity`, `danceability`, `energy`, etc.). This means there are many variables (both categorical and numeric) to choose from when it comes to predictors.
+
+There are minimal missingness issues with `spotify_data` (only 5 songs missing values for `track_name`, `track_artist`, and `track_album_name`). 
+
+## Univariate analysis of target variable (`track_popularity`)
+
+Looking closer at `track_popularity`, there are 0 missing values and no clear outliers to take into account (which makes sense, considering all values just range from 0-100).
+
+After splitting the popularity scores into ranges of 10 and plotting, it's clear that most scores range from 40-70, however the range of scores with the highest frequency is 0-10. With that said, looking at the distribution—as well as the mean and median of the data both being around 43-45 (ie closer to the middle)—it appears that the distribution of scores here is normally distributed enough to not require logarithmic transformations when fitting models. 
+
+```{r}
+
+spotify_data_edited <- spotify_data |>
+  mutate(
+    track_popularity_bins = cut(track_popularity, 
+                                breaks = seq(0, 100, by = 10), 
+                                include.lowest = TRUE)) |>
+  relocate(track_popularity_bins)
+
+track_popularity_bar <- spotify_data_edited |> 
+  ggplot(aes(track_popularity_bins)) +
+  geom_bar() +
+  labs(
+    x = "Track Popularity",
+    y = "Frequency",
+    title = "Track Popularity Distribution"
+  )
+
+track_popularity_density <- spotify_data_edited |> 
+  ggplot(aes(track_popularity)) +
+  geom_density() +
+  labs(
+    x = "Track Popularity",
+    y = "Frequency",
+    title = "Track Popularity Density"
+  )
+
+track_popularity_bar
+track_popularity_density
+```
+
+
+## Potential data issues
+
+- Due to the sheer number of observations, any kind of graph or visualization of the data will have to be heavily adjusted in order to account for overplotting and greater variation that may falsely appear as outliers.
+
+## Misc
+
+Since the dataset as is started out fairly clean, I plan to just go directly into model fitting/recipes. I plan on experimenting with many different interactions/combinations in recipes, since there are many potential predictors to choose from (particularly among the numeric predictors, as well as with the factor variables `playlist_genre` and `playlist_subgenre`).

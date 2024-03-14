@@ -1,0 +1,91 @@
+---
+title: "Progress Memo 2"
+subtitle: |
+  | Final Project 
+  | Data Science 2 with R (STAT 301-2)
+author: "Olivia Joung"
+date: today
+
+format:
+  html:
+    toc: true
+    embed-resources: true
+    code-fold: show
+    link-external-newwindow: true
+    
+execute:
+  warning: false
+
+from: markdown+emoji 
+reference-location: margin
+citation-location: margin
+---
+
+::: {.callout-tip icon=false}
+
+## Github Repo Link
+
+[https://github.com/stat301-2-2024-winter/final-project-2-olivia-joung.git](https://github.com/stat301-2-2024-winter/final-project-2-olivia-joung.git)
+
+:::
+
+## Data source
+
+`spotify_data`^[citation: [public Kaggle dataset](https://www.kaggle.com/datasets/joebeachcapital/30000-spotify-songs)] is a dataset of roughly 33,000 songs on Spotify.
+
+## Assessment Metric: RMSE
+
+## Analysis Plan/Progress
+
+The main goal here is to compare different models for predicting the popularity of a certain track. Later, I also plan to test different combinations of predictors for each model type via feature engineering/recipes. 
+
+#### Data splitting and resampling
+
+Initial split with a training/testing proportion of 80/20. V-fold cross-validation also used with a v-value of 10 and 5 repeats (full code of initial split seen in corresponding R script). 
+
+#### Model types
+
+In addition to the baseline model, we'll also be using:
+
+- Linear regression
+- Lasso regression
+- Boosted tree
+- K-nearest neighbors
+- Random forest
+- (May possibly add ridge regression in the future)
+
+(All R scripts already created, with baseline and lm models already fitted using basic recipe)
+
+#### Recipes
+
+For now, the basic recipe is already created, as seen in the `recipes` R script. As we continue to explore the data, we will create more recipes that will test different combinations of/interactions between predictors (e.g. one with all quantitative predictors, one with just qualitative predictors, etc.), so I do not have an exact number of recipes I plan to have as of now. Considering the dataset already came fairly clean, I will likely have at least five different recipes I'd like to test.
+
+#### Models defined thus far
+
+Metrics for currently fitted models (baseline and linear regression):
+```{r}
+#| echo: false
+library(here)
+
+load(here("results/combined_metrics.rda"))
+knitr::kable(combined_metrics)
+```
+
+## Current progress and next steps
+
+As of now, I have baseline/linear regression recipes and models fitted (though the linear regression recipe is still likely subject to change). 
+
+- Immediate next steps will be to perform some univariate/bivariate EDA in order to better see what the best, most accurate predictors might be for `track_popularity`. This should be especially helpful when it comes to the more quantitative/technical variables, like `danceability` or `tempo`.
+- I will also be tuning/fitting recipes for lasso, boosted tree, k-nearest neighbors, and random forest models. I will likely create multiple recipes for each model type, just to play around with different interactions between predictors, seeing as there are so many. 
+
+#### Potential issues
+
+A few of the predictors appear to be fairly similar/related to each other (eg `danceability` and `energy`), which could potentially lead to some redundancies when it comes to fitting the models. I hope to better see just how closely related these predictors are to each other through my EDA and then decide whether I need to eliminate one of those variables in my final recipes from there. 
+
+Other than that, there are no missing values (in the variables that we will be working with), and we have already established in the first memo that the distribution of `track_popularity` is relatively uniform, so we will likely not need major scale transformations.
+
+
+
+
+
+
